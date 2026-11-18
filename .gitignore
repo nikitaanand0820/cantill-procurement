@@ -1,0 +1,39 @@
+node_modules/
+.env
+.DS_Store
+dist/
+*.log
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Credentials
+.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+
+# Build outputs
+dist/
+**/dist/
+build/
+**/build/
+
+# System and logs
+.DS_Store
+*.log
+
+# Local backups
+*.before-ranking.js
+*.before-amendment.js
+*.before-amendment.jsx
+*.before-amendment.json
+*.zip
+
+# Development backups
+*.backup.js
+*.backup.jsx
+*.backup.css

@@ -1,0 +1,144 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Item {
+  itemCode      String  @id
+  description   String
+  uom           String
+  category      String
+  itemType      String
+  standardPrice Decimal @db.Decimal(16, 4)
+}
+
+model Supplier {
+  supplierId    String @id
+  name          String
+  city          String
+  categories    String
+  status        String
+  onTimePct     Float
+  qualityRating Float
+}
+
+model Plant {
+  plant String @id
+  name  String
+}
+
+model POHistory {
+  id              Int      @id @default(autoincrement())
+  poNumber        String
+  poDate          DateTime @db.Date
+  supplierId      String
+  itemCode        String
+  quantity        Decimal  @db.Decimal(16, 4)
+  uom             String
+  unitPrice       Decimal  @db.Decimal(16, 4)
+  plant           String
+  deliveredOnTime Boolean
+}
+
+model Contract {
+  contractId    String         @id
+  supplierId    String
+  startDate     DateTime       @db.Date
+  endDate       DateTime       @db.Date
+  valueCap      Decimal        @db.Decimal(18, 4)
+  consumedValue Decimal        @db.Decimal(18, 4)
+  source        String         @default("REGISTER")
+  lines         ContractLine[]
+}
+
+model ContractLine {
+  id          Int      @id @default(autoincrement())
+  contractId  String
+  itemCode    String
+  description String
+  uom         String
+  rate        Decimal  @db.Decimal(16, 4)
+  contract    Contract @relation(fields: [contractId], references: [contractId])
+}
+
+model PolicyVersion {
+  id            Int      @id @default(autoincrement())
+  version       String   @unique
+  effectiveFrom DateTime @db.Date
+  status        String
+  rules         Json
+  createdAt     DateTime @default(now())
+}
+
+model PurchaseRequestLine {
+  id                 Int      @id @default(autoincrement())
+  prNo               String
+  prLine             Int
+  createdAt          DateTime
+  requester          String
+  department         String
+  plant              String
+  itemCode           String?
+  description        String
+  quantity           Decimal  @db.Decimal(16, 4)
+  uom                String
+  estimatedUnitPrice Decimal? @db.Decimal(16, 4)
+  needByDate         DateTime @db.Date
+  urgency            String
+
+  @@unique([prNo, prLine])
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  actor     String
+  action    String
+  entityId  String
+  comment   String?
+  details   Json?
+  createdAt DateTime @default(now())
+}
+
+model ProcurementDecision {
+  id                   Int      @id @default(autoincrement())
+  prNo                 String
+  prLine               Int
+  resolvedItemCode     String?
+  groupId              String?
+  poId                 String?
+  decision             String
+  route                String
+  supplierId           String?
+  unitPrice            Decimal? @db.Decimal(16,4)
+  groupValueInr        Decimal? @db.Decimal(18,4)
+  suggestedSupplierIds String?
+  policyVersion        String
+  reason               String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@unique([prNo, prLine])
+}
+
+
+model ProcurementDocument {
+  id            Int      @id @default(autoincrement())
+  documentNo    String   @unique
+  documentType  String
+  route         String
+  prNo          String
+  prLine        Int
+  groupId       String?
+  supplierId    String?
+  unitPrice     Decimal? @db.Decimal(16,4)
+  groupValueInr Decimal? @db.Decimal(18,4)
+  policyVersion String
+  status        String   @default("CREATED")
+  createdBy     String
+  createdAt     DateTime @default(now())
+  @@unique([prNo,prLine])
+}

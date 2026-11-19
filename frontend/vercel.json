@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://cantill-procurement-1.onrender.com/api/:path*"
+      "destination": "https://cantill-procurement-o8ec.onrender.com/api/:path*"
     },
     {
       "source": "/(.*)",

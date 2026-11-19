@@ -37,3 +37,5 @@ build/
 *.backup.js
 *.backup.jsx
 *.backup.css
+
+/data/
